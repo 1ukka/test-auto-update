@@ -13,7 +13,7 @@
   "devDependencies": {
     "electron": "^31.2.1",
     "electron-builder": "^24.13.3",
-    "electron-log": "^4.4.8",
+    "electron-log": "^4.4.6",
     "electron-updater": "^4.6.5"
   },
   "build": {
@@ -27,7 +27,12 @@
     "files": [
       "index.js",
       "index.html",
-      "package.json"
+      "package.json",
+      {
+        "from": "node_modules",
+        "to": "node_modules",
+        "filter": ["electron-updater/**/*", "electron-log/**/*"]
+      }
     ],
     "directories": {
       "buildResources": "build"
