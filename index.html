@@ -7,5 +7,21 @@
 </head>
 <body>
     <h1>Hello world!</h1>
+    <div id="update-status"></div>
+    <script>
+        const { ipcRenderer } = require('electron');
+
+        ipcRenderer.on('update-available', () => {
+            document.getElementById('update-status').innerText = 'Update available.';
+        });
+
+        ipcRenderer.on('update-downloaded', () => {
+            document.getElementById('update-status').innerText = 'Update downloaded. Installing in 5 seconds...';
+        });
+
+        ipcRenderer.on('update-error', (event, error) => {
+            document.getElementById('update-status').innerText = `Error in auto-updater: ${error}`;
+        });
+    </script>
 </body>
 </html>

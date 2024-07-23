@@ -1,18 +1,18 @@
-const { app, BrowserWindow } = require("electron");
-const { autoUpdater } = require("electron-updater");
-const path = require('path');
-const log = require('electron-log');
+const { app, BrowserWindow, autoUpdater, ipcMain } = require("electron");
+const path = require("path");
+const log = require("electron-log");
 
 // Configure logging
-log.transports.file.level = 'info';
+log.transports.file.level = "info";
 autoUpdater.logger = log;
 
 // Set update URL for autoUpdater
 autoUpdater.setFeedURL({
-  provider: 'github',
-  repo: 'test-auto-update',
-  owner: '1ukka',
-  private: false
+  url: `https://github.com/1ukka/test-auto-update`,
+  // provider: 'github',
+  // repo: 'test-auto-update',
+  // owner: '1ukka',
+  private: false,
 });
 
 let win;
@@ -50,8 +50,8 @@ function createWindow() {
     frame: false,
   });
 
-  win.loadFile('index.html');
-  
+  win.loadFile("index.html");
+
   win.once("ready-to-show", () => {
     splash.close();
     win.show();
@@ -61,24 +61,26 @@ function createWindow() {
     win = null;
     app.quit();
   });
+  autoUpdater.checkForUpdates();
 
-  // Initialize auto-updater
-  autoUpdater.checkForUpdatesAndNotify();
-  
-  autoUpdater.on('update-available', () => {
-    log.info('Update available.');
+  autoUpdater.on("update-available", () => {
+    log.info("Update available.");
+    win.webContents.send("update-available");
   });
 
-  autoUpdater.on('update-downloaded', () => {
-    log.info('Update downloaded; will install in 5 seconds');
+  autoUpdater.on("update-downloaded", () => {
+    log.info("Update downloaded; will install in 5 seconds");
+    win.webContents.send("update-downloaded");
     setTimeout(() => {
       autoUpdater.quitAndInstall();
     }, 5000);
   });
 
-  autoUpdater.on('error', (err) => {
-    log.error('Error in auto-updater. ' + err);
+  autoUpdater.on("error", (err) => {
+    log.error("Error in auto-updater: " + err);
+    win.webContents.send("update-error", err);
   });
+
 }
 
 app.on("ready", createWindow);
