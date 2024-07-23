@@ -1,6 +1,19 @@
 const { app, BrowserWindow } = require("electron");
 const { autoUpdater } = require("electron-updater");
+const path = require('path');
 const log = require('electron-log');
+
+// Configure logging
+log.transports.file.level = 'info';
+autoUpdater.logger = log;
+
+// Set update URL for autoUpdater
+autoUpdater.setFeedURL({
+  provider: 'github',
+  repo: 'test-auto-update',
+  owner: '1ukka',
+  private: false
+});
 
 let win;
 let splash;
@@ -19,7 +32,7 @@ function createWindow() {
     height: 800,
     show: false,
   });
-  
+
   splash = new BrowserWindow({
     webPreferences: {
       nodeIntegration: true,
